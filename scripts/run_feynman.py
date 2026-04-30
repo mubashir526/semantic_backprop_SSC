@@ -56,11 +56,11 @@ logger = logging.getLogger(__name__)
 # ======================================================================
 
 # Base config defaults — tuned for complex exponential equations (e.g. I.6.2)
-_POP_SIZE        = 1000
-_N_GEN           = 100
+_POP_SIZE        = 500
+_N_GEN           = 50
 _HOF_SIZE        = 10
-_CX_PROB         = 0.7
-_MUT_PROB        = 0.3
+_CX_PROB         = 0.6
+_MUT_PROB        = 0.2
 _MIN_DEPTH       = 1
 _MAX_DEPTH       = 5
 _TOURNAMENT_SIZE = 5

@@ -31,8 +31,8 @@ from deap import algorithms, base, creator, gp, tools
 
 from src.physics.dimension import Dimension
 from src.physics.library import DimLibrary
-from src.sbp.engine import repair_individual
-from src.evolution.utils import cxSSC, MAX_HEIGHT
+from src.sbp.engine import repair_individual, MAX_TREE_NODES
+from src.evolution.utils import cxSSC
 
 logger = logging.getLogger(__name__)
 
@@ -162,13 +162,13 @@ def run_evolution_with_sbp(
     else:
         toolbox.register("mate", gp.cxOnePoint)
 
-    # Apply height limit decorators to mate and mutate
-    height_limit = gp.staticLimit(
-        key=lambda ind: ind.height,
-        max_value=MAX_HEIGHT,
+    # Enforce strict NODE length limit on crossover and mutation
+    length_limit = gp.staticLimit(
+        key=lambda ind: len(ind),
+        max_value=MAX_TREE_NODES,
     )
-    toolbox.decorate("mate",   height_limit)
-    toolbox.decorate("mutate", height_limit)
+    toolbox.decorate("mate",   length_limit)
+    toolbox.decorate("mutate", length_limit)
 
     # ── Initialise population ─────────────────────────────────────────────
     pop  = toolbox.population(n=cfg.pop_size)
@@ -212,12 +212,12 @@ def run_evolution_with_sbp(
                     del offspring[i + 1].fitness.values
 
         # ── STEP 3: Mutation ──────────────────────────────────────────────
-        for ind in offspring:
+        for i in range(len(offspring)):
             if random.random() < cfg.mut_prob:
-                (ind,) = toolbox.mutate(ind)
+                (offspring[i],) = toolbox.mutate(offspring[i])
                 # Immediately invalidate
-                if ind.fitness.valid:
-                    del ind.fitness.values
+                if offspring[i].fitness.valid:
+                    del offspring[i].fitness.values
 
         # ── STEP 4: SBP Repair ────────────────────────────────────────────
         # CRITICAL: repair ONLY individuals with invalid fitness.

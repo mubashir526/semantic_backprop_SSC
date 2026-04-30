@@ -39,6 +39,7 @@ import numpy as np
 
 from deap import gp, tools
 from scipy.optimize import minimize
+from src.sbp.engine import MAX_TREE_NODES
 from src.physics.dimension import Dimension
 from src.physics.dimension_rules import DimensionalViolation
 from src.sbp.engine import evaluate_dim_at
@@ -501,10 +502,10 @@ def cxSSC(
         ind1[0:len(ind1)] = new_nodes1
         ind2[0:len(ind2)] = new_nodes2
 
-        # ── Height-limit reversion ────────────────────────────────────────
-        if ind1.height > MAX_HEIGHT:
+        # ── Length-limit reversion ────────────────────────────────────────
+        if len(ind1) > MAX_TREE_NODES:
             ind1[0:len(ind1)] = list(orig1)
-        if ind2.height > MAX_HEIGHT:
+        if len(ind2) > MAX_TREE_NODES:
             ind2[0:len(ind2)] = list(orig2)
 
         # ── Fitness invalidation ──────────────────────────────────────────
